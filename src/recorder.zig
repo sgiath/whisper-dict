@@ -190,3 +190,71 @@ fn kindName(kind: Kind) []const u8 {
         .ffmpeg => "ffmpeg",
     };
 }
+
+fn tmpRootPath(allocator: std.mem.Allocator, tmp: *const std.testing.TmpDir) ![]u8 {
+    return std.fmt.allocPrint(allocator, ".zig-cache/tmp/{s}", .{tmp.sub_path});
+}
+
+test "ensureRecordingsDirExists rejects empty directory value" {
+    try std.testing.expectError(error.InvalidRecordingsDirectory, ensureRecordingsDirExists(""));
+}
+
+test "ensureRecordingsDirExists creates nested directories" {
+    var tmp = std.testing.tmpDir(.{});
+    defer tmp.cleanup();
+
+    const root_path = try tmpRootPath(std.testing.allocator, &tmp);
+    defer std.testing.allocator.free(root_path);
+
+    const recordings_dir = try std.fmt.allocPrint(std.testing.allocator, "{s}/nested/recordings", .{root_path});
+    defer std.testing.allocator.free(recordings_dir);
+
+    try ensureRecordingsDirExists(recordings_dir);
+
+    var dir = try std.fs.cwd().openDir(recordings_dir, .{});
+    dir.close();
+}
+
+test "ensureRecordingWasWritten fails when output is missing" {
+    var tmp = std.testing.tmpDir(.{});
+    defer tmp.cleanup();
+
+    const root_path = try tmpRootPath(std.testing.allocator, &tmp);
+    defer std.testing.allocator.free(root_path);
+
+    const missing_path = try std.fmt.allocPrint(std.testing.allocator, "{s}/missing.wav", .{root_path});
+    defer std.testing.allocator.free(missing_path);
+
+    try std.testing.expectError(error.RecordingNotWritten, ensureRecordingWasWritten(missing_path));
+}
+
+test "ensureRecordingWasWritten fails for zero-byte files" {
+    var tmp = std.testing.tmpDir(.{});
+    defer tmp.cleanup();
+
+    var empty_file = try tmp.dir.createFile("empty.wav", .{});
+    empty_file.close();
+
+    const root_path = try tmpRootPath(std.testing.allocator, &tmp);
+    defer std.testing.allocator.free(root_path);
+
+    const empty_path = try std.fmt.allocPrint(std.testing.allocator, "{s}/empty.wav", .{root_path});
+    defer std.testing.allocator.free(empty_path);
+
+    try std.testing.expectError(error.EmptyRecording, ensureRecordingWasWritten(empty_path));
+}
+
+test "ensureRecordingWasWritten accepts non-empty files" {
+    var tmp = std.testing.tmpDir(.{});
+    defer tmp.cleanup();
+
+    try tmp.dir.writeFile(.{ .sub_path = "filled.wav", .data = "RIFF" });
+
+    const root_path = try tmpRootPath(std.testing.allocator, &tmp);
+    defer std.testing.allocator.free(root_path);
+
+    const filled_path = try std.fmt.allocPrint(std.testing.allocator, "{s}/filled.wav", .{root_path});
+    defer std.testing.allocator.free(filled_path);
+
+    try ensureRecordingWasWritten(filled_path);
+}

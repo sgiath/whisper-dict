@@ -60,3 +60,17 @@ fn withoutFileExtension(file_path: []const u8) []const u8 {
     const dot_index = std.mem.lastIndexOfScalar(u8, file_path, '.') orelse return file_path;
     return file_path[0..dot_index];
 }
+
+test "withoutFileExtension strips only trailing extension" {
+    try std.testing.expectEqualStrings(
+        "recordings/session.v1/clip",
+        withoutFileExtension("recordings/session.v1/clip.wav"),
+    );
+}
+
+test "withoutFileExtension leaves extensionless paths unchanged" {
+    try std.testing.expectEqualStrings(
+        "recordings/session",
+        withoutFileExtension("recordings/session"),
+    );
+}

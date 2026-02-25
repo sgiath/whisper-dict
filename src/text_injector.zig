@@ -107,3 +107,17 @@ fn normalizeWhitespace(allocator: std.mem.Allocator, input: []const u8) ![]u8 {
 
     return out.toOwnedSlice(allocator);
 }
+
+test "normalizeWhitespace collapses runs and trims edges" {
+    const normalized = try normalizeWhitespace(std.testing.allocator, "\n  hello\t\tworld  \r\nzig  ");
+    defer std.testing.allocator.free(normalized);
+
+    try std.testing.expectEqualStrings("hello world zig", normalized);
+}
+
+test "normalizeWhitespace returns empty for whitespace-only content" {
+    const normalized = try normalizeWhitespace(std.testing.allocator, " \n\t\r ");
+    defer std.testing.allocator.free(normalized);
+
+    try std.testing.expectEqual(@as(usize, 0), normalized.len);
+}

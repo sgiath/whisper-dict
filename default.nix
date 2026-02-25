@@ -49,6 +49,14 @@ pkgs.stdenv.mkDerivation {
     runHook postBuild
   '';
 
+  doCheck = true;
+
+  checkPhase = ''
+    runHook preCheck
+    zig build test -Doptimize=ReleaseSafe
+    runHook postCheck
+  '';
+
   installPhase = ''
     runHook preInstall
     mkdir -p "$out/share/whisper-dict"

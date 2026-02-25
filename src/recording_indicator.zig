@@ -122,3 +122,38 @@ fn runCommand(allocator: std.mem.Allocator, argv: []const []const u8) !CommandRe
         else => .failed,
     };
 }
+
+fn tmpRootPath(allocator: std.mem.Allocator, tmp: *const std.testing.TmpDir) ![]u8 {
+    return std.fmt.allocPrint(allocator, ".zig-cache/tmp/{s}", .{tmp.sub_path});
+}
+
+test "configExists requires both eww config files" {
+    var tmp = std.testing.tmpDir(.{});
+    defer tmp.cleanup();
+
+    try tmp.dir.writeFile(.{ .sub_path = "eww.yuck", .data = "(defwindow recording_overlay [])" });
+
+    const relative_dir = try tmpRootPath(std.testing.allocator, &tmp);
+    defer std.testing.allocator.free(relative_dir);
+
+    try std.testing.expect(!(try configExists(std.testing.allocator, relative_dir)));
+
+    try tmp.dir.writeFile(.{ .sub_path = "eww.scss", .data = "* { color: white; }" });
+    try std.testing.expect(try configExists(std.testing.allocator, relative_dir));
+}
+
+test "configExists works with absolute paths" {
+    var tmp = std.testing.tmpDir(.{});
+    defer tmp.cleanup();
+
+    try tmp.dir.writeFile(.{ .sub_path = "eww.yuck", .data = "(defwindow recording_overlay [])" });
+    try tmp.dir.writeFile(.{ .sub_path = "eww.scss", .data = "* { color: white; }" });
+
+    const relative_dir = try tmpRootPath(std.testing.allocator, &tmp);
+    defer std.testing.allocator.free(relative_dir);
+
+    const absolute_dir = try std.fs.cwd().realpathAlloc(std.testing.allocator, relative_dir);
+    defer std.testing.allocator.free(absolute_dir);
+
+    try std.testing.expect(try configExists(std.testing.allocator, absolute_dir));
+}
