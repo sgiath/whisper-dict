@@ -1,0 +1,362 @@
+* {
+  all: unset;
+}
+
+.recording-chip {
+  background: rgba(8, 8, 8, 0.84);
+  border: 1px solid rgba(245, 245, 245, 0.18);
+  border-radius: 999px;
+  padding: 9px 14px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+.wave {
+  min-height: 34px;
+}
+
+.bar {
+  min-width: 3px;
+  border-radius: 999px;
+  background: rgba(245, 245, 245, 0.96);
+  animation-duration: 980ms;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+}
+
+.h1 {
+  animation-name: bar-a;
+  animation-duration: 820ms;
+  animation-delay: 40ms;
+}
+.h2 {
+  animation-name: bar-b;
+  animation-duration: 1110ms;
+  animation-delay: 190ms;
+}
+.h3 {
+  animation-name: bar-c;
+  animation-duration: 740ms;
+  animation-delay: 520ms;
+}
+.h4 {
+  animation-name: bar-d;
+  animation-duration: 1260ms;
+  animation-delay: 80ms;
+}
+.h5 {
+  animation-name: bar-e;
+  animation-duration: 910ms;
+  animation-delay: 410ms;
+}
+.h6 {
+  animation-name: bar-f;
+  animation-duration: 690ms;
+  animation-delay: 670ms;
+}
+.h7 {
+  animation-name: bar-g;
+  animation-duration: 1040ms;
+  animation-delay: 250ms;
+}
+.h8 {
+  animation-name: bar-h;
+  animation-duration: 780ms;
+  animation-delay: 560ms;
+}
+.h9 {
+  animation-name: bar-c;
+  animation-duration: 1320ms;
+  animation-delay: 130ms;
+}
+.h10 {
+  animation-name: bar-f;
+  animation-duration: 860ms;
+  animation-delay: 720ms;
+}
+.h11 {
+  animation-name: bar-a;
+  animation-duration: 1160ms;
+  animation-delay: 310ms;
+}
+.h12 {
+  animation-name: bar-d;
+  animation-duration: 970ms;
+  animation-delay: 470ms;
+}
+.h13 {
+  animation-name: bar-g;
+  animation-duration: 680ms;
+  animation-delay: 880ms;
+}
+.h14 {
+  animation-name: bar-b;
+  animation-duration: 1210ms;
+  animation-delay: 520ms;
+}
+.h15 {
+  animation-name: bar-e;
+  animation-duration: 790ms;
+  animation-delay: 940ms;
+}
+.h16 {
+  animation-name: bar-h;
+  animation-duration: 1100ms;
+  animation-delay: 140ms;
+}
+.h17 {
+  animation-name: bar-d;
+  animation-duration: 730ms;
+  animation-delay: 640ms;
+}
+.h18 {
+  animation-name: bar-c;
+  animation-duration: 1250ms;
+  animation-delay: 70ms;
+}
+.h19 {
+  animation-name: bar-f;
+  animation-duration: 920ms;
+  animation-delay: 520ms;
+}
+.h20 {
+  animation-name: bar-a;
+  animation-duration: 690ms;
+  animation-delay: 960ms;
+}
+.h21 {
+  animation-name: bar-h;
+  animation-duration: 1180ms;
+  animation-delay: 360ms;
+}
+.h22 {
+  animation-name: bar-e;
+  animation-duration: 840ms;
+  animation-delay: 770ms;
+}
+.h23 {
+  animation-name: bar-b;
+  animation-duration: 1020ms;
+  animation-delay: 210ms;
+}
+.h24 {
+  animation-name: bar-g;
+  animation-duration: 760ms;
+  animation-delay: 880ms;
+}
+
+@keyframes bar-a {
+  from {
+    min-height: 8px;
+    opacity: 0.38;
+  }
+
+  22% {
+    min-height: 24px;
+    opacity: 0.9;
+  }
+
+  57% {
+    min-height: 30px;
+    opacity: 1;
+  }
+
+  76% {
+    min-height: 15px;
+    opacity: 0.62;
+  }
+
+  to {
+    min-height: 12px;
+    opacity: 0.55;
+  }
+}
+
+@keyframes bar-b {
+  from {
+    min-height: 14px;
+    opacity: 0.42;
+  }
+
+  31% {
+    min-height: 19px;
+    opacity: 0.68;
+  }
+
+  63% {
+    min-height: 34px;
+    opacity: 1;
+  }
+
+  82% {
+    min-height: 12px;
+    opacity: 0.52;
+  }
+
+  to {
+    min-height: 9px;
+    opacity: 0.46;
+  }
+}
+
+@keyframes bar-c {
+  from {
+    min-height: 10px;
+    opacity: 0.36;
+  }
+
+  28% {
+    min-height: 14px;
+    opacity: 0.58;
+  }
+
+  54% {
+    min-height: 22px;
+    opacity: 0.92;
+  }
+
+  72% {
+    min-height: 27px;
+    opacity: 0.84;
+  }
+
+  to {
+    min-height: 16px;
+    opacity: 0.52;
+  }
+}
+
+@keyframes bar-d {
+  from {
+    min-height: 18px;
+    opacity: 0.44;
+  }
+
+  24% {
+    min-height: 12px;
+    opacity: 0.5;
+  }
+
+  47% {
+    min-height: 36px;
+    opacity: 1;
+  }
+
+  74% {
+    min-height: 26px;
+    opacity: 0.74;
+  }
+
+  to {
+    min-height: 11px;
+    opacity: 0.48;
+  }
+}
+
+@keyframes bar-e {
+  from {
+    min-height: 9px;
+    opacity: 0.35;
+  }
+
+  35% {
+    min-height: 15px;
+    opacity: 0.64;
+  }
+
+  59% {
+    min-height: 26px;
+    opacity: 0.96;
+  }
+
+  81% {
+    min-height: 22px;
+    opacity: 0.86;
+  }
+
+  to {
+    min-height: 20px;
+    opacity: 0.6;
+  }
+}
+
+@keyframes bar-f {
+  from {
+    min-height: 13px;
+    opacity: 0.4;
+  }
+
+  21% {
+    min-height: 25px;
+    opacity: 0.8;
+  }
+
+  44% {
+    min-height: 31px;
+    opacity: 1;
+  }
+
+  68% {
+    min-height: 17px;
+    opacity: 0.65;
+  }
+
+  to {
+    min-height: 8px;
+    opacity: 0.44;
+  }
+}
+
+@keyframes bar-g {
+  from {
+    min-height: 11px;
+    opacity: 0.42;
+  }
+
+  34% {
+    min-height: 16px;
+    opacity: 0.6;
+  }
+
+  61% {
+    min-height: 38px;
+    opacity: 1;
+  }
+
+  85% {
+    min-height: 20px;
+    opacity: 0.7;
+  }
+
+  to {
+    min-height: 14px;
+    opacity: 0.52;
+  }
+}
+
+@keyframes bar-h {
+  from {
+    min-height: 8px;
+    opacity: 0.34;
+  }
+
+  29% {
+    min-height: 12px;
+    opacity: 0.46;
+  }
+
+  53% {
+    min-height: 18px;
+    opacity: 0.88;
+  }
+
+  78% {
+    min-height: 15px;
+    opacity: 0.66;
+  }
+
+  to {
+    min-height: 10px;
+    opacity: 0.46;
+  }
+}

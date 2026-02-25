@@ -1,0 +1,34 @@
+(defwindow recording_overlay
+  :monitor 0
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :geometry (geometry :x "50%" :y "34px" :anchor "bottom center")
+  (box :class "recording-chip"
+    :orientation "h"
+    :spacing 11
+    (box :class "wave" :orientation "h" :spacing 4 :halign "center" :valign "center"
+      (box :class "bar h1 d1" :valign "center")
+      (box :class "bar h2 d2" :valign "center")
+      (box :class "bar h3 d3" :valign "center")
+      (box :class "bar h4 d4" :valign "center")
+      (box :class "bar h5 d5" :valign "center")
+      (box :class "bar h6 d6" :valign "center")
+      (box :class "bar h7 d1" :valign "center")
+      (box :class "bar h8 d2" :valign "center")
+      (box :class "bar h9 d3" :valign "center")
+      (box :class "bar h10 d4" :valign "center")
+      (box :class "bar h11 d5" :valign "center")
+      (box :class "bar h12 d6" :valign "center")
+      (box :class "bar h13 d1" :valign "center")
+      (box :class "bar h14 d2" :valign "center")
+      (box :class "bar h15 d3" :valign "center")
+      (box :class "bar h16 d4" :valign "center")
+      (box :class "bar h17 d5" :valign "center")
+      (box :class "bar h18 d6" :valign "center")
+      (box :class "bar h19 d1" :valign "center")
+      (box :class "bar h20 d2" :valign "center")
+      (box :class "bar h21 d3" :valign "center")
+      (box :class "bar h22 d4" :valign "center")
+      (box :class "bar h23 d5" :valign "center")
+      (box :class "bar h24 d6" :valign "center"))))
