@@ -74,6 +74,9 @@ in
       description = ''
         Push-to-talk trigger key passed to whisper-dict via --trigger-key.
         Use a key name (for example "rightctrl", "f8", "capslock") or an evdev key code.
+        Named aliases are in https://github.com/sgiath/whisper-dict/blob/master/src/config.zig (trigger_key_descriptors).
+        Find numeric codes with `evtest` (look for EV_KEY code values, for example code 97 for KEY_RIGHTCTRL).
+        Linux key code constants are documented in https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h.
       '';
     };
 

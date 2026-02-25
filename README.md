@@ -48,6 +48,12 @@ Note: models ending in `.en` are English-only. For Czech or other languages,
 use a multilingual model (for example `large-v3-turbo`, `medium`, `small`, `base`).
 
 Trigger key accepts key names (for example `rightctrl`, `leftalt`, `f8`, `capslock`) or a numeric evdev key code.
+Available named key aliases are defined in [`trigger_key_descriptors` in `src/config.zig`](./src/config.zig).
+
+To find a numeric evdev key code on Linux, run `sudo evtest`, select your keyboard,
+press the desired key, and use the reported `code` value from `EV_KEY` (for example
+`code 97 (KEY_RIGHTCTRL)` means `--trigger-key 97`).
+Reference key definitions are in Linux [`input-event-codes.h`](https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h).
 
 Default model path is `~/.cache/whisper-dict/models/ggml-large-v3-turbo.bin`.
 Default recordings directory is `/tmp/whisper-dict-recordings`.
