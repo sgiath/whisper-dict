@@ -1,7 +1,6 @@
 const std = @import("std");
 
 const ev_key: u16 = 0x01;
-const key_right_ctrl: u16 = 97;
 const key_release: i32 = 0;
 const key_press: i32 = 1;
 
@@ -26,10 +25,11 @@ pub const Listener = struct {
     devices: std.ArrayList(InputDevice),
     poll_fds: []std.posix.pollfd,
     device_trigger_down: []bool,
+    trigger_key_code: u16,
     poll_fd_count: usize,
     trigger_down_count: usize,
 
-    pub fn init(allocator: std.mem.Allocator) !Listener {
+    pub fn init(allocator: std.mem.Allocator, trigger_key_code: u16) !Listener {
         var devices = try collectInputDevices(allocator);
         errdefer closeInputDevices(allocator, &devices);
 
@@ -53,6 +53,7 @@ pub const Listener = struct {
             .devices = devices,
             .poll_fds = poll_fds,
             .device_trigger_down = device_trigger_down,
+            .trigger_key_code = trigger_key_code,
             .poll_fd_count = devices.items.len,
             .trigger_down_count = 0,
         };
@@ -113,7 +114,7 @@ pub const Listener = struct {
 
     fn handleInputEvent(self: *Listener, device_idx: usize, event: LinuxInputEvent) ?TriggerTransition {
         if (event.type != ev_key) return null;
-        if (event.code != key_right_ctrl) return null;
+        if (event.code != self.trigger_key_code) return null;
 
         const was_any_down = self.trigger_down_count > 0;
         const was_down = self.device_trigger_down[device_idx];
@@ -212,15 +213,15 @@ fn readInputEvent(file: *const std.fs.File) !LinuxInputEvent {
     return event;
 }
 
-fn makeKeyEvent(value: i32) LinuxInputEvent {
+fn makeKeyEvent(code: u16, value: i32) LinuxInputEvent {
     var event: LinuxInputEvent = undefined;
     event.type = ev_key;
-    event.code = key_right_ctrl;
+    event.code = code;
     event.value = value;
     return event;
 }
 
-fn makeTestListener(allocator: std.mem.Allocator, device_count: usize) !Listener {
+fn makeTestListener(allocator: std.mem.Allocator, device_count: usize, trigger_key_code: u16) !Listener {
     const poll_fds = try allocator.alloc(std.posix.pollfd, device_count);
     errdefer allocator.free(poll_fds);
     const device_trigger_down = try allocator.alloc(bool, device_count);
@@ -231,30 +232,30 @@ fn makeTestListener(allocator: std.mem.Allocator, device_count: usize) !Listener
         .devices = .empty,
         .poll_fds = poll_fds,
         .device_trigger_down = device_trigger_down,
+        .trigger_key_code = trigger_key_code,
         .poll_fd_count = device_count,
         .trigger_down_count = 0,
     };
 }
 
 test "transitions are aggregated across multiple devices" {
-    var listener = try makeTestListener(std.testing.allocator, 2);
+    const trigger_key_code: u16 = 97;
+    var listener = try makeTestListener(std.testing.allocator, 2, trigger_key_code);
     defer listener.deinit();
 
-    try std.testing.expect(listener.handleInputEvent(0, makeKeyEvent(key_press)) == .pressed);
-    try std.testing.expect(listener.handleInputEvent(0, makeKeyEvent(key_press)) == null);
-    try std.testing.expect(listener.handleInputEvent(1, makeKeyEvent(key_press)) == null);
-    try std.testing.expect(listener.handleInputEvent(0, makeKeyEvent(key_release)) == null);
-    try std.testing.expect(listener.handleInputEvent(1, makeKeyEvent(key_release)) == .released);
+    try std.testing.expect(listener.handleInputEvent(0, makeKeyEvent(trigger_key_code, key_press)) == .pressed);
+    try std.testing.expect(listener.handleInputEvent(0, makeKeyEvent(trigger_key_code, key_press)) == null);
+    try std.testing.expect(listener.handleInputEvent(1, makeKeyEvent(trigger_key_code, key_press)) == null);
+    try std.testing.expect(listener.handleInputEvent(0, makeKeyEvent(trigger_key_code, key_release)) == null);
+    try std.testing.expect(listener.handleInputEvent(1, makeKeyEvent(trigger_key_code, key_release)) == .released);
 }
 
 test "non-target keys do not change state" {
-    var listener = try makeTestListener(std.testing.allocator, 1);
+    const trigger_key_code: u16 = 97;
+    var listener = try makeTestListener(std.testing.allocator, 1, trigger_key_code);
     defer listener.deinit();
 
-    var event: LinuxInputEvent = undefined;
-    event.type = ev_key;
-    event.code = 1;
-    event.value = key_press;
+    const event = makeKeyEvent(1, key_press);
 
     try std.testing.expect(listener.handleInputEvent(0, event) == null);
     try std.testing.expect(listener.trigger_down_count == 0);

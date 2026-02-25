@@ -10,6 +10,7 @@ pub const Session = struct {
     child: std.process.Child,
     kind: Kind,
     output_path: []u8,
+    started_at_ms: i64,
 
     pub fn deinit(self: *Session, allocator: std.mem.Allocator) void {
         allocator.free(self.output_path);
@@ -37,6 +38,7 @@ pub fn start(allocator: std.mem.Allocator, recordings_dir: []const u8) !Session 
         .child = spawned_recorder.child,
         .kind = spawned_recorder.kind,
         .output_path = output_path,
+        .started_at_ms = std.time.milliTimestamp(),
     };
 }
 

@@ -33,16 +33,6 @@ pub fn start(allocator: std.mem.Allocator) !?Session {
 }
 
 fn resolveConfigDir(allocator: std.mem.Allocator) !?[]u8 {
-    const env_dir = std.process.getEnvVarOwned(allocator, "WHISPER_DICT_EWW_CONFIG_DIR") catch |err| switch (err) {
-        error.EnvironmentVariableNotFound => null,
-        else => return err,
-    };
-
-    if (env_dir) |dir| {
-        if (try configExists(allocator, dir)) return dir;
-        allocator.free(dir);
-    }
-
     const local_dir = "eww";
     if (try configExists(allocator, local_dir)) {
         return @as(?[]u8, try allocator.dupe(u8, local_dir));

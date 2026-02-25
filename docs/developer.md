@@ -29,9 +29,9 @@ Core intent:
 Current behavior:
 
 - Runs as a Linux daemon-like foreground process.
-- Listens globally for Right Ctrl press/release using `/dev/input/event*`.
-- Starts WAV recording on Right Ctrl press and stops on Right Ctrl release.
+- Listens globally for the configured trigger key press/release using `/dev/input/event*`.
+- Starts WAV recording on trigger key press and stops on trigger key release.
 - Runs `whisper-cli` after each recording completes.
-- Saves both `recordings/recording-<timestamp>.wav` and `recordings/recording-<timestamp>.txt`.
+- Saves both `<recordings-dir>/recording-<timestamp>.wav` and `<recordings-dir>/recording-<timestamp>.txt` (default `/tmp/whisper-dict-recordings`).
 - Types the transcribed text into the currently focused window.
 - Shows a minimal black-and-white waveform indicator near the bottom of the screen while recording is active (EWW overlay).

@@ -44,19 +44,19 @@ fn handleShutdownSignal(_: i32) callconv(.c) void {
 
 pub fn run(allocator: std.mem.Allocator, app_config: config.Config) anyerror!void {
     if (builtin.os.tag != .linux) {
-        std.debug.print("Global Right Ctrl capture is currently supported on Linux only.\n", .{});
+        std.debug.print("Global trigger key capture is currently supported on Linux only.\n", .{});
         return;
     }
 
     const signal_guard = ShutdownSignalGuard.install();
     defer signal_guard.deinit();
 
-    var listener = try input_listener.Listener.init(allocator);
+    var listener = try input_listener.Listener.init(allocator, app_config.trigger_key_code);
     defer listener.deinit();
 
     std.debug.print(
-        "Listening globally for Right Ctrl on {d} input device(s). Hold Right Ctrl to record.\n",
-        .{listener.deviceCount()},
+        "Listening globally for {s} on {d} input device(s). Hold {s} to record.\n",
+        .{ app_config.trigger_key_label, listener.deviceCount(), app_config.trigger_key_label },
     );
 
     var active_recording: ?recorder.Session = null;
@@ -135,11 +135,24 @@ pub fn run(allocator: std.mem.Allocator, app_config: config.Config) anyerror!voi
                         continue;
                     };
 
-                    const text_path = transcriber.transcribe(
+                    const now_ms = std.time.milliTimestamp();
+                    const duration_ms_i64 = @max(@as(i64, 0), now_ms - recording_to_stop.started_at_ms);
+                    const duration_ms: u64 = @intCast(duration_ms_i64);
+
+                    if (duration_ms < app_config.min_recording_ms) {
+                        std.debug.print(
+                            "Skipping short recording ({d}ms < {d}ms).\n",
+                            .{ duration_ms, app_config.min_recording_ms },
+                        );
+                        continue;
+                    }
+
+                    const transcription = transcriber.transcribe(
                         allocator,
                         recording_to_stop.output_path,
                         app_config.model_path,
                         app_config.language,
+                        app_config.min_confidence,
                     ) catch |err| {
                         switch (err) {
                             error.TranscriptionCommandNotFound => {
@@ -151,17 +164,33 @@ pub fn run(allocator: std.mem.Allocator, app_config: config.Config) anyerror!voi
                             error.TranscriptionOutputMissing => {
                                 std.debug.print("whisper-cli did not produce a transcription file.\n", .{});
                             },
+                            error.TranscriptionConfidenceOutputMissing => {
+                                std.debug.print("whisper-cli did not produce a confidence JSON file.\n", .{});
+                            },
+                            error.TranscriptionConfidenceUnavailable => {
+                                std.debug.print("Could not read transcription confidence from whisper-cli output.\n", .{});
+                            },
                             else => {
                                 std.debug.print("Transcription failed: {s}\n", .{@errorName(err)});
                             },
                         }
                         continue;
                     };
-                    defer allocator.free(text_path);
+                    defer allocator.free(transcription.text_path);
 
-                    std.debug.print("Saved transcription to {s}\n", .{text_path});
+                    if (transcription.average_token_confidence) |confidence| {
+                        if (confidence < app_config.min_confidence) {
+                            std.debug.print(
+                                "Skipping low-confidence transcription ({d:.3} < {d:.3}).\n",
+                                .{ confidence, app_config.min_confidence },
+                            );
+                            continue;
+                        }
+                    }
 
-                    text_injector.injectFromFile(allocator, text_path) catch |err| {
+                    std.debug.print("Saved transcription to {s}\n", .{transcription.text_path});
+
+                    text_injector.injectFromFile(allocator, transcription.text_path) catch |err| {
                         switch (err) {
                             error.EmptyTranscription => {
                                 std.debug.print("Transcription is empty, nothing to type.\n", .{});

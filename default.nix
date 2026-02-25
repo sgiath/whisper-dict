@@ -66,9 +66,7 @@ pkgs.stdenv.mkDerivation {
 
   postFixup = ''
     wrapProgram "$out/bin/whisper-dict" \
-      --prefix PATH : "${pkgs.lib.makeBinPath runtimeDeps}" \
-      --set-default WHISPER_DICT_EWW_CONFIG_DIR "$out/share/whisper-dict/eww" \
-      --run 'if [ -z "''${WHISPER_DICT_RECORDINGS_DIR:-}" ]; then export WHISPER_DICT_RECORDINGS_DIR="''${XDG_DATA_HOME:-$HOME/.local/share}/whisper-dict/recordings"; fi'
+      --prefix PATH : "${pkgs.lib.makeBinPath runtimeDeps}"
   '';
 
   passthru = {

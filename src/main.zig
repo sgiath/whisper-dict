@@ -20,6 +20,24 @@ pub fn main() !void {
             error.MissingLanguage => {
                 std.debug.print("Missing language. Use --language <code|auto>.\n", .{});
             },
+            error.MissingTriggerKey => {
+                std.debug.print("Missing trigger key. Use --trigger-key <name|code>.\n", .{});
+            },
+            error.MissingMinConfidence => {
+                std.debug.print("Missing confidence value. Use --min-confidence <0..1>.\n", .{});
+            },
+            error.MissingMinRecordingMs => {
+                std.debug.print("Missing recording duration. Use --min-recording-ms <ms>.\n", .{});
+            },
+            error.InvalidTriggerKey => {
+                std.debug.print("Invalid trigger key. Use --trigger-key <name|code>.\n", .{});
+            },
+            error.InvalidMinConfidence => {
+                std.debug.print("Invalid confidence value. Use --min-confidence <0..1>.\n", .{});
+            },
+            error.InvalidMinRecordingMs => {
+                std.debug.print("Invalid recording duration. Use --min-recording-ms <ms>.\n", .{});
+            },
             error.InvalidArgument => {
                 std.debug.print("Invalid argument. Use --help for usage.\n", .{});
             },

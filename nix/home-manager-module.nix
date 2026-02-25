@@ -66,6 +66,36 @@ in
       example = "/tmp/whisper-dict-recordings";
       description = "Directory for recorded audio and transcription text output.";
     };
+
+    triggerKey = lib.mkOption {
+      type = lib.types.str;
+      default = "rightctrl";
+      example = "f8";
+      description = ''
+        Push-to-talk trigger key passed to whisper-dict via --trigger-key.
+        Use a key name (for example "rightctrl", "f8", "capslock") or an evdev key code.
+      '';
+    };
+
+    minConfidence = lib.mkOption {
+      type = lib.types.float;
+      default = 0.0;
+      example = 0.4;
+      description = ''
+        Minimum token confidence required before whisper-dict types a transcription.
+        Use 0.0 to disable confidence filtering.
+      '';
+    };
+
+    minRecordingMs = lib.mkOption {
+      type = lib.types.addCheck lib.types.int (v: v >= 0);
+      default = 0;
+      example = 250;
+      description = ''
+        Minimum press duration in milliseconds before whisper-dict runs transcription.
+        Use 0 to disable short-tap filtering.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -87,6 +117,12 @@ in
           (lib.escapeShellArg cfg.recordingsDir)
           "--language"
           (lib.escapeShellArg cfg.language)
+          "--trigger-key"
+          (lib.escapeShellArg cfg.triggerKey)
+          "--min-confidence"
+          (lib.escapeShellArg (toString cfg.minConfidence))
+          "--min-recording-ms"
+          (lib.escapeShellArg (toString cfg.minRecordingMs))
         ];
         Restart = "on-failure";
         RestartSec = "2";
